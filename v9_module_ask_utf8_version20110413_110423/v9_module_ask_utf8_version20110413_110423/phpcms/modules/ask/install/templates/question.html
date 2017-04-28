@@ -1,0 +1,204 @@
+{template "content","header"}
+<link href="{CSS_PATH}table_form.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript">
+<!--
+	var charset = '{CHARSET}';
+	var uploadurl = '{php echo pc_base::load_config('system','upload_url')}';
+//-->
+</script>
+<div class="main">
+	<div class="col-left">
+    	<div class="crumbs"><a href="{siteurl($siteid)}">首页</a><span> &gt; </span><a href="{APP_PATH}index.php?m=ask&c=index">问吧</a><span> &gt; </span>我要提问</div>
+        <div id="Article">
+        	
+			
+			<table cellpadding="0" cellspacing="0" width="100%" class="table_form">
+
+	<form name="myform" method="post" action="{APP_PATH}index.php?m=ask&c=index&a=question" onSubmit="return checkform(this);">
+      <tr>
+        <th width="70">您的问题</th>
+        <td><input type="text" style="width:400px;" name="info[title]" id="title" value="{$title}" class="measure-input " onBlur="$.post('api.php?op=get_keywords&number=3&sid='+Math.random()*5, {data:$('#title').val()}, function(data){if(data && $('#keywords').val()=='') $('#keywords').val(data); })" onkeyup="strlen_verify(this, 'title_len', 80);"/><input type="hidden" name="style_color" id="style_color" value="">
+		<input type="hidden" name="style_font_weight" id="style_font_weight" value="">还可输入<B><span id="title_len">80</span></B> 个字符</td>
+		<script language="javascript" type="text/javascript" src="{JS_PATH}content_addtop.js"></script>
+
+      </tr>
+      <tr>
+        <th style="vertical-align:top">问题补充</th>
+        <td><textarea name="message" id="message" rows="15" cols="60" style="width:96%;" ></textarea>
+		{if $M[use_editor]}{form::editor('message','basic','ask', $catid, '', 0, 0,0,200,0, 0)}{/if}
+        </td>
+      </tr>
+      <tr>
+		<th>栏目:</th>
+		<td>
+		<span id="load_catid"></span>
+		<input type="hidden" name="info[catid]" id="catid" value="">
+		<a href="javascript:category_reload();">重选</a>
+<script type="text/javascript"> 
+		function category_load(id)
+		{
+			$.get('?m=ask&c=load&a=category&pc_hash={$pc_hash}&rand=<?php echo RAND(1,100); ?>', { id: id },
+				  function(data){
+					$('#load_catid').append(data);
+				  });
+		}
+		function category_reload()
+		{
+			$('#load_catid').html('');
+			category_load(0);
+		}
+		function category_change_reload(id)
+		{	
+			
+			$('#catid').val(id);
+			$('#load_catid').html('');
+			category_load(0);
+			category_load(id);
+		}
+		category_load(0);
+		
+</script>
+		</td>
+	</tr>
+
+      <tr>
+        <th>悬赏积分</th>
+        <td><select name="info[reward]" id="reward"  onchange="ckreward();">
+	<option value=0>0</option>
+	<option value=5>5</option>
+	<option value=10>10</option>
+	<option value=15>15</option>
+	<option value=20>20</option>
+	<option value=30>30</option>
+	<option value=45>45</option>
+	<option value=60>60</option>
+	<option value=80>80</option>
+	<option value=100>100</option>
+</select>( 注：您目前的总积分为：{$_point} )
+<span id="reward_msg"></span></td>
+      </tr>
+      <tr>
+        <th>匿名设定</th>
+        <td><input type="checkbox" id="anonymity" onclick="checkAnonymity();" name="info[anonymity]" value="1">您可以对问题设定匿名，但您需要付出积分{$M[anybody_score]}分。<span id="anonymity_msg"></span></td>
+      </tr>
+      {if $M[publish_code]}
+      <tr>
+  	    <th>验证码</th>
+    	<td><input type="text" name="code"  class="input-text" id="yzmText" onfocus="var offset = $(this).offset();$('#yzm').css({'left': +offset.left-8, 'top': +offset.top-$('#yzm').height()});$('#yzm').show();$('#yzmText').data('hide', 1)" onblur='$("#yzmText").data("hide", 0);setTimeout("hide_code()", 1000)' />
+		  <div id="yzm" class="yzm">{form::checkcode()}<br />点击图片更换</a></div>
+        </td>
+      </tr>
+      {/if}
+      <tr>
+        <th></th>
+        <td><input type="hidden" name="forward" value="{$forward}"><input name="dosubmit" type="submit" value="好了，提交" /></td>
+      </tr>
+	  </form>
+    </table>
+
+
+      </div>
+
+	   <div class="bk10"></div>
+
+
+  </div>
+    <div class="col-auto">
+        <div class="box">
+            <h5 class="title-2">积分月排行</h5>
+             {pc:ask action="hits" catid="$catid" num="10" order="month DESC" cache="3600"}
+            <ul class="content digg">
+				{loop $data $r}
+					<li><a href="{$r[url]}" target="_blank">{$r[username]}</a></li>
+				{/loop}
+            </ul>
+            {/pc}
+        </div>
+        <div class="bk10"></div>
+        <div class="box">
+            <h5 class="title-2">积分周排行</h5>
+             {pc:ask action="hits" catid="$catid" num="10" order="week DESC" cache="3600"}
+            <ul class="content digg">
+				{loop $data $r}
+					<li><a href="{$r[url]}" target="_blank">{$r[username]}</a></li>
+				{/loop}
+            </ul>
+            {/pc}
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+<!--
+function hide_code() {
+	if ($('#yzmText').data('hide')==0) {
+		$('#yzm').hide();
+	}
+}
+function on_submit() {
+	$('#loading').show();
+	return true;        
+}
+
+var maxlimit=10000;
+$('#message').keyup(function() {
+	{if !$_userid}redirect('{APP_PATH}index.php?m=member&c=index&a=login&forward={urlencode(get_url())}');{/if}
+	data = document.getElementById("message").value.length;
+	if (data > maxlimit)
+	{
+		alert("问题补充不能超过1000字");
+		document.getElementById("message").value = document.getElementById("message").value.substring(0, maxlimit);
+		return false;
+	}
+	return true;
+});
+
+function ckreward()
+{
+	if($('#reward').val() != "" && $('#reward').val() > {$_point})
+	{
+		$('#reward_msg').html("<font color='red'><strong>抱歉,悬赏不能高于您目前的总积分.</strong></font>");
+		return false;
+	}
+	else
+	{
+		$('#reward_msg').html("");
+		return true;
+	}
+}
+function checkAnonymity()
+{
+	if($('#anonymity').attr('checked')==true)
+	{
+		var _points = {$_point};
+		if(_points < {$M[anybody_score]})
+		{
+			$('#anonymity_msg').html("<font color='red'><strong>抱歉,您的积分不足以设置匿名.</strong></font>");
+			$('#anonymity').attr('checked',false);
+		}
+	}
+}
+
+function checkform()
+{
+	if($('#title').val() == '')
+	{
+		alert("标题不能为空");
+		$('#title').focus();
+		return false;
+	}
+	if($('#catid').val() == 0)
+	{
+		alert("请选择分类");
+		$('#catid').focus();
+		return false;
+	}
+	if($('#reward').val() != "" && $('#reward').val() > {$_point})
+	{
+		alert("抱歉,悬赏不能高于您目前的总积分");
+		return false;
+	}
+}
+//-->
+</script>
+
+{template "content","footer"}

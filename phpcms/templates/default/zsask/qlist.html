@@ -1,0 +1,114 @@
+{template "content", "header"}
+{template "zsask", "header"}
+
+<div class="question">
+{php $cat_path = get_catpath($catid);}
+<div style="margin-bottom:5px;" class="crumbs">
+<a href="{APP_PATH}">首页</a><span> &gt; </span>
+<a href="{ASK_PATH}">问答</a> &gt; 
+<a href="{ASK_LIST}">分类</a>{$cat_path}</div>
+
+<div class="pre fl">
+{pc:get sql="SELECT * FROM phpcms_ask_category WHERE parentid=$catid AND status =99 ORDER BY listorder ASC" return="catinfo"}
+{if $catinfo}
+<table class="table_form cat">
+<tr>
+{loop $catinfo $r}
+{if $n%4 !=0}
+<td><a href="{ASK_LIST}{$r[catid]}" title="{$r[description]}">{$r[catname]} [<span style="color:red">{get_question($r[catid])}</span>]</a></td>
+{else}
+<td><a href="{ASK_LIST}{$r[catid]}" title="{$r[description]}">{$r[catname]} [<span style="color:red">{get_question($r[catid])}</span>]</a></td>
+</tr><tr>
+{/if}
+{/loop}
+</tr>
+</table>
+{/if}
+{/pc}
+
+<table class="table_form">
+<tr class="trtitle">
+<td colspan="3">
+<a id="bgc_2" href="javascript:;" onclick="choice(2)" class="bgc">全部</a> 
+<a id="bgc_0" href="javascript:;" onclick="choice(0)">待解决</a> 
+<a id="bgc_99" href="javascript:;" onclick="choice(99)">已解决</a> 
+<a id="bgc_1" href="javascript:;" onclick="choice(1)">零回答</a>
+<input type="text" name="keywords" id="keywords" value="{$_GET[keywords]}" class="input-text txt">
+<input type="image" src="{CSS_PATH}cqzsv46/images/s_btn.gif" name="dosubmit" onclick="srch()" value="搜 索" class="pointer">&nbsp;&nbsp;
+</td>
+</tr>
+<tr class="trtitle2">
+<td>问题（共<span id="total_q"></span>）{if $cat_path}| <a href="{ASK_LIST}">分类首页</a>{$cat_path}{/if}</td>
+<td width="40" align="center">回答</td>
+<td align="center">日期</td>
+</tr>
+{php $where = get_catids($catid); $stus = intval($_GET[s]);}
+{if $stus ==1}
+{php $where .= ' AND status=0';}
+
+{pc:get sql="SELECT qid FROM phpcms_ask_answer WHERE zid=0 AND status=0 GROUP BY qid" return="qids"}
+{loop $qids $_q}
+{php $qidarr[] = $_q[qid]}
+{/loop}
+{/pc}
+{if $qidarr}
+{php $where .= ' AND '.to_sqls($qidarr, '', 'qid NOT');}
+{/if}
+{elseif $stus !=2}
+{php $where .= ' AND status='.$stus;}
+{else}
+{php $where .=' AND status !=1'}
+{/if}
+
+{if !empty($_GET['keywords'])}
+{php $keywords = new_addslashes(safe_replace(urldecode($_GET['keywords']))); }
+{php $where .= " AND question LIKE '%$keywords%'"; }
+{/if}
+
+{pc:get sql="SELECT * FROM phpcms_ask_question WHERE $where ORDER BY qid DESC" num="25" page="$page" return="arrq"}
+{loop $arrq $r}
+<tr>
+<td>
+<div class="qstion">
+<a href="{ASK_LIST}{$r[catid]}" style="color:#888">[{$askcategorys[$r[catid]][catname]}] </a> 
+<a class="qn" href="{if $r[url]}{$r[url]}{else}{ASK_SHOW}{$r[qid]}{/if}" target="_blank" title="{$r[question]}">{$r[question]}</a>
+</div>
+</td>
+
+<td align="center">
+{get_answer($r[qid])}
+</td>
+
+<td align="center">
+{format_date($r[addtime])}
+</td></tr>
+{/loop}
+<tr><td colspan="3"><div id="pages">{$pages}</div></td></tr>
+{/pc}
+</table>
+
+<script type="text/javascript">
+	function choice(status) {
+		window.location = '{ASK_LIST}{$catid}&s='+ status;
+	}
+	
+	$('.trtitle a').removeClass('bgc');
+	$('#bgc_{$stus}').addClass('bgc');
+	var total_q = $('#pages .a1:eq(0)').html();
+	if (!total_q) {
+		$('#total_q').html('{count($arrq)}条');
+	}else {
+		$('#total_q').html(total_q);
+	}
+
+	function srch() {
+		var keywords = $('#keywords').val();
+		window.location = window.location +'&keywords='+ keywords;
+	}
+	
+</script>
+
+</div>
+{template "zsask", "right"}
+</div>
+{template "content", "footer"}

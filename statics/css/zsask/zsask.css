@@ -1,0 +1,87 @@
+
+.button {cursor:pointer}
+.fl {float:left;}
+.blu {color:blue;}
+.hide {display:none;}
+
+.trtitle {background:#f7f7f7;border-top:1px solid #EEEEEE;}
+.table_form tr.trtitle:hover {background-color:#f7f7f7}
+.table_form .trtitle td {padding:0 0 0 20px;}
+.trtitle2 {background:#fffced}
+
+.pre {width:700px;}
+
+.pre pre{ white-space: pre-wrap; word-wrap: break-word; border-bottom:1px #eee solid; padding:10px; width:680px;}
+
+.cm {width:640px; padding:10px; padding-top:0px; white-space: pre-wrap; word-wrap: break-word; }
+
+.question, .answer {width:960px; margin:auto;}
+.table_form {margin-top:10px; width:100%;}
+
+.agreeaser {background: none repeat scroll 0 0 #FFFADD;}
+
+.anlist { border: 1px solid #EEEEEE; margin-top:10px}
+.anp {padding:10px;}
+.colp {text-align:right; margin: 5px 10px;}
+
+
+.table_form h1 {font-size:20px;display:block;height:30px;width:630px;overflow:hidden;}
+
+.qbg {background:url("img/global.png") no-repeat right -715px}
+.table_form tr:hover {background-color:#fffced;}
+.select_type .table_form .tbg {background: #ffaaee;}
+.bg {background: #fffccd; border: 1px #eee solid; padding: 5px 10px;}
+
+.pointer {cursor:pointer;}
+.type {margin: 10px 0;}
+.select_type {width:210px; float:left; margin-left:13px; border:1px #eee solid; border-bottom:none;}
+.select_type table {width:100%}
+
+.right_ask {width:250px;margin-left:10px;margin-bottom:10px}
+
+.zask {color:#5EBB0B; }
+
+.cinfo {background:#fbfbfb;border:1px solid #DDDDDD; margin: 10px;}
+
+.qstion a {float:left;display:block;}
+.qstion a.qn {height:18px;width:430px;margin-left:5px;overflow:hidden;}
+
+.cat {margin-bottom: 20px;}
+
+.table_form.cat tr {
+    border-bottom: 1px solid #EEEEEE;
+}
+.table_form.cat td {
+    border-bottom: none;
+}
+
+.trtitle a {
+    display: block;
+    float: left;
+    font-family: "";
+    font-size: 14px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    width: 80px;
+    border-right:1px solid #EEEEEE;
+}
+.trtitle a.bgc {background:#fffced;}
+.trtitle a:hover {background:#fffced;}
+
+.trtitle > td {
+    line-height: 28px;
+    text-align: right;
+}
+.txt {width:180px;height:15px;}
+
+
+
+
+
+
+
+
+
+
+

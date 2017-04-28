@@ -1,0 +1,21 @@
+{template "content","header"}
+<!--main-->
+<div class="main photo-channel">
+<div class="crumbs"><a href="{siteurl($siteid)}">首页</a><span> > 视频</div>
+<div class="bk10"></div>
+	{pc:get sql="SELECT * FROM phpcms_videos WHERE status=99 ORDER BY id DESC" num="20" page="$page"}
+		<ul class="photo-list picbig">
+			{loop $data $r}
+			<li>
+			<div class="img-wrap">
+			<a href="{if empty($r[url])}{APP_PATH}index.php?m=videos&a=show&id={$r[id]}{else}{$r[url]}{/if}" title="{$r[title]}" target="_blank"><img src="{thumb($r[thumb],150,112)}" width="150" height="112" alt="{$r[title]}"/></a>
+			</div>
+			<a href="{if empty($r[url])}{APP_PATH}index.php?m=videos&a=show&id={$r[id]}{else}{$r[url]}{/if}" title="{$r[title]}" target="_blank" style="color:{$r[style]}">{str_cut($r[title],30)}</a>
+			</li>
+			{/loop}
+		</ul>
+		<div id="pages" class="text-c">{$pages}</div>
+	{/pc}
+    </div>
+</div>
+{template "content","footer"}

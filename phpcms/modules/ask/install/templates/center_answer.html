@@ -1,0 +1,69 @@
+{template 'member', 'header'}
+<link href="{CSS_PATH}dialog.css" rel="stylesheet" type="text/css" />
+<div id="memberArea">
+	{template 'member', 'left'}
+	<div class="col-auto">
+		<div class="col-1 " style="padding:5px;">
+		 <p id="position"><strong>当前位置：</strong><a href="index.php?m=member&c=index&a=init&t=0">会员中心</a>&gt;<a href="index.php?m=ask&c=center&a=ask">问吧</a>&gt;<a href="{$APP_PATH}?m=ask&c=center&a=answer">我的回答</a>{if $_GET['catid']}&gt;{$CATEGORYS[$_GET[catid]][catname]}{/if}</p>
+		 </div>
+		 <div class="bk10"></div>
+		 {if !$_GET['catid']}
+		 <div class="col-1 ">
+			<h5 class="title">我的回答</h5>
+
+			<div class="content">
+				<UL>
+				{loop $categorys $cat}
+					<li style="font-size:14px; float:left; width:25%; height:30px;"><a href="{$APP_PATH}?m=ask&c=center&a=answer&catid={$cat[catid]}">{$cat[catname]}</a> <span style="color:#999999">({$cat_posts_num[$cat[catid]]})</span></li>
+				{/loop}
+				</UL>
+			</div>
+		</div>
+		 {else}
+		 <div class="col-1 ">
+			<h5 class="title">我的回答</h5>
+
+			<div class="content">
+		<table width="100%" cellspacing="0"  class="table-list">
+		<thead>
+      <tr>
+        <th width="50" align="center">问题ID</th>
+        <th align="center">回复内容摘要</th>
+        <th width="100" align="center">回答时间</th>
+        <th width="30" align="center">状态</th>
+        <th width="30" align="center">编辑</th>
+      </tr>
+	  </thead>
+	  <tbody>
+	{loop $infos $info}
+	<tr>
+		<td align="center">{$info[askid]}</td>
+		<td align="left"><a href="{ask_url($info[catid],$info[askid])}#p{$info[pid]}" target="_blank" title="{str_cut(strip_tags($info[message]), 272, '..')}" >{str_cut(strip_tags($info[message]), 72, '..')}</a></td>
+		<td align="center">{date('Y-m-d H:i',$info[addtime])}</td>
+		<td align="center">{if $info[optimal]}<font color=#009900>已采纳</font>{else}未采纳{/if}</td>
+		<td align="center">{if $info[optimal]}{else}<a href="{$APP_PATH}?m=ask&c=center&a=edit&id={$info[askid]}&pid={$info[pid]}"><img src="/phpcms/modules/ask/images/edit.gif" alt="编辑" width="16" height="16" /></a>{/if}</td>
+	</tr>
+	{/loop}
+	</tbody>
+    </table>
+		
+		
+
+ {if $pages}<div id="pages"> {$pages}</div>{/if}
+
+
+			</div>
+			<span class="o1"></span><span class="o2"></span><span class="o3"></span><span class="o4"></span>
+		</div>
+		{/if}
+		
+<div class="bk10"></div>		
+<div class="col-1 " style="padding:5px; line-height:22px;">
+为了让您的提问被更多人关注，以获得最佳的回答，您可以一次追加悬赏20分以上（含20分），将问题在分类下的“待解决”问题列表中显示为最新，类似于新提出的问题！ 
+<span class="o1"></span><span class="o2"></span><span class="o3"></span><span class="o4"></span>
+</div>		
+
+	</div>
+</div>
+<div class="clear"></div>
+{template 'member', 'footer'}

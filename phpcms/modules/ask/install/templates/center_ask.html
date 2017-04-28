@@ -1,0 +1,59 @@
+{template 'member', 'header'}
+<link href="{CSS_PATH}dialog.css" rel="stylesheet" type="text/css" />
+<div id="memberArea">
+	{template 'member', 'left'}
+	<div class="col-auto">
+		<div class="col-1 " style="padding:5px;">
+		 <p id="position"><strong>当前位置：</strong><a href="index.php?m=member&c=index&a=init&t=0">会员中心</a>&gt;<a href="index.php?m=ask&c=center&a=ask">问吧</a>&gt;{if $status==-1}全部提问{elseif $status==3}待解决问题{elseif $status==5}已解决问题{elseif $flag==1}投票中的问题{else}全部提问{/if}</p>
+		 </div>
+		 <div class="bk10"></div>
+		 <div class="col-1 ">
+			<h5 class="title">{if $status==-1}全部提问{elseif $status==3}待解决问题{elseif $status==5}已解决问题{elseif $flag==1}投票中的问题{else}全部提问{/if}</h5>
+
+			<div class="content">
+		
+		<table width="100%" cellspacing="0"  class="table-list">
+       <thead>
+      <tr>
+        <th>标题</th>
+        <th width="50">回答数</th>
+        <th width="50">状态</th>
+        <th width="50">点击数</th>
+        <th width="100">提问时间</th>
+        <th width="30">编辑</th>
+      </tr>
+	  </thead>
+	  <tbody>
+	{loop $infos $info}
+	<tr>
+		<td align="left">
+{if $info['reward']}<span style="color:orange;"><img src="/phpcms/modules/ask/images/icon_credit.gif" width="12" height="11">{$info[reward]} </span>{/if}
+	<a href="{ask_url($info[catid],$info[askid])}" target="_blank" title="{$info[title]}">{str_cut($info[title], 72, '..')}</a> <a href="{$CATEGORYS[$info[catid]][url]}" style="color:gray">[{$CATEGORYS[$info[catid]][catname]}]</a>
+		</td>
+		<td align="center">{$info[answercount]}</td>
+		<td align="center">{if $info[status]==3}<font color=#009900>待解决</font>{elseif $info[status]==5}<font color=#FF9900>已解决</font>{else}<font color=#BCBCBC>已关闭</font>{/if}</td>
+		<td align="center">{$info[hits]}</td>
+		<td align="center">{date('Y-m-d H:i',$info[addtime])}</td>
+		<td align="center">{if $info[status]==3}<a href="index.php?m=ask&c=center&a=edit&job=ask&id={$info[askid]}"><img src="/phpcms/modules/ask/images/edit.gif" alt="编辑" width="16" height="16" /></a>{/if}</td>
+	</tr>
+	{/loop}
+	</tbody>
+    </table>
+		
+
+ {if $pages}<div id="pages"> {$pages}</div>{/if}
+
+			</div>
+			<span class="o1"></span><span class="o2"></span><span class="o3"></span><span class="o4"></span>
+		</div>
+		
+<div class="bk10"></div>		
+<div class="col-1 " style="padding:5px; line-height:22px;">
+为了让您的提问被更多人关注，以获得最佳的回答，您可以追加悬赏！ 
+<span class="o1"></span><span class="o2"></span><span class="o3"></span><span class="o4"></span>
+</div>	
+		
+	</div>
+</div>
+<div class="clear"></div>
+{template 'member', 'footer'}

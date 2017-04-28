@@ -1,0 +1,209 @@
+{template "content", "header"}
+{template "zsask", "header"}
+
+<div class="answer">
+<div style="margin-bottom:5px;" class="crumbs">
+<a href="{APP_PATH}">首页</a><span> &gt; </span>
+<a href="{ASK_PATH}">问答</a> &gt; 
+<a href="{ASK_LIST}">分类</a>{get_catpath($info[catid])} &gt;
+回答</div>
+
+<div class="pre fl">
+
+<form name="qform" id="qform" action="" method="post">
+<table class="table_form">
+<tr><th class="qbg" width="40">&nbsp;</th><td><h1>
+{$info[question]}</h1>
+</td></tr>
+
+<tr><th colspan="2" style="border:none">提问者：
+<a href="{APP_PATH}index.php?m=yp&c=com_index&userid={if $info[userid]}{$info[userid]}{else}1655{/if}" style="color:blue" target="_blank">
+{if $info[userid]}{get_nickname($info[userid])}{else}{substr($info[ip], 0, -4)}.***{/if}</a> | 
+浏览：<span id="hits"></span> 次 | 
+{format_date($info[addtime])} &nbsp;&nbsp;&nbsp;</th></tr>
+
+<tr><th><strong>补充：</strong></th><td>
+{$info[content]}
+</td></tr>
+{if empty($info[aid])}
+<tr><th>回答：</th><td>
+<textarea name="answer" id="answer_id" style="width:400px;height:50px;"></textarea>
+</td></tr>
+
+<tr><th></th><td>
+<input type="hidden" name="qid" id="qid_id" value="{$info[qid]}">
+<input type="submit" name="dosubmit" value=" 提交答案 " class="button" />
+</td></tr>
+{/if}
+</table>
+</form>
+
+{loop $ts_answer $a}
+
+<div class="anlist {if $info[aid] && $info[aid] == $a[aid]}agreeaser{/if}">
+
+<p class="anp">
+<a href="{APP_PATH}index.php?m=yp&c=com_index&userid={if $a[userid]}{$a[userid]}{else}1655{/if}" style="color:blue" target="_blank">
+{if $a[userid]}{get_nickname($a[userid])}{else}{substr($a[ip], 0, -4)}.***{/if}</a> | 
+
+积分：{$a[score]}0 | {format_date($info[addtime])}</p>
+<pre>
+{$a[content]}<br />
+{php $answer_arr = add_answer($a[aid], $info[qid]);}
+{if $answer_arr}
+{loop $answer_arr $val}
+{if $val[userid] ==$info[userid]}<span class="zask">追问：</span>{$val[content]}<br />
+{else}<span class="zask">回答：</span>{$val[content]}<br />
+{/if}
+{/loop}
+{if $a[userid] == $this->userid && $info[status] ==0}
+<input type="button" name="btn2" value="回答追问" class="button" onclick="addAnswer('{$a[aid]}', '{$info[qid]}')">
+{/if}{/if}
+</pre>
+<p class="colp">
+{if ($this->userid == $info[userid] && $info[status] ==0) || $this->admin}
+<span><input type="button" name="btn1" value="选为满意答案" class="button" onclick="javascript:window.location='{APP_PATH}index.php?m=zsask&a=agreeAnswer&aid={$a[aid]}&qid={$info[qid]}'"> &nbsp;&nbsp;&nbsp;</span>
+{/if}
+{if $this->userid == $info[userid] && $info[status] ==0}
+<span>
+<input type="button" name="btn2" value="继续追问" class="button" onclick="addAnswer('{$a[aid]}', '{$info[qid]}')">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+{/if}
+{if ($a[userid] == $this->userid || $this->IP == $info[ip]) && $info[status] ==0}
+<span><input type="button" name="btn4" value="完善答案" class="button" onclick="editAnswer('{$a[aid]}', '{$info[qid]}')"> &nbsp;&nbsp;&nbsp;</span>
+{/if}
+{if param::get_cookie('admin_username')}
+<input type="button" name="btn3" value="删除" class="button" onclick="delAnswer('{$a[aid]}', '{$info[qid]}', this)">&nbsp;&nbsp;&nbsp;
+</span>
+{/if}
+<span>
+<input type="button" name="btn3" value="评论" class="button" onclick="commentAnswer('{$a[aid]}', '{$info[qid]}')">&nbsp;
+<a href="javascript:;" onclick="commentAnswer('{$a[aid]}', '{$info[qid]}')">(<span style='color:red'>{get_comment($info[qid], $a[aid])}</span>)</a></span>
+</p>
+
+<div class="cinfo_{$a[aid]} {if !isset($_GET[page])}hide{/if}">
+
+<table class="table_form" cellspacing="0">
+
+<tbody id="grade_2">
+
+<tr><td>
+<textarea name="comment" id="comment_{$a[aid]}" style="width:610px;height:50px"></textarea>
+<input type="button" name="cbutton" id="cbutton" value="提交" onclick="commentAnswer('{$a[aid]}', '{$info[qid]}', 1)" class="button"/>
+</td></tr>
+
+</tbody>
+</table>
+
+<table class="table_form" style="margin-top:10px; width:100%;">
+<tbody id="cmlist_{$a[aid]}">
+{php $_aid = $a[aid]}
+{pc:get sql="SELECT * FROM phpcms_ask_comment WHERE qid=$qid AND aid=$a[aid] AND status!=1 ORDER BY cid DESC" num="5" page="$page" return="cminfo"}
+{loop $cminfo $k $cm}
+{if is_numeric($k)}
+<tr><td>
+<a id="u_{$cm[cid]}" href="{APP_PATH}index.php?m=yp&c=com_index&userid={if $cm[userid]}{$cm[userid]}{else}1655{/if}" style="color:blue" target="_blank">{if $cm[userid]}{get_nickname($cm[userid], 'username')}{else}{$cm[ip]}{/if}</a> | 
+{format_date($cm[addtime])}</td> 
+<td align="right">
+{if param::get_cookie('admin_username')}
+<a href="javascript:;" onclick="delComment('{$_aid}', '{$cm[cid]}', this)">删除</a> | 
+{/if}
+<a href="javascript:;" onclick="commentAnswer('{$_aid}', '{$info[qid]}', 0, '{$cm[cid]}')">回复</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</td></tr>
+<tr id="comt_{$cm[cid]}"><td colspan="2">
+<div class="cm">
+{$cm[content]}
+</div>
+</td></tr>
+{/if}
+{/loop}
+<tr><td colspan="2">
+<div id="pages">{$pages}</div>
+</td></tr>
+{/pc}
+</tbody>
+</table>
+</div>
+
+</div>
+{/loop}
+</div>
+{template "zsask", "right"}
+</div>
+
+<script type="text/javascript">
+	function addAnswer(aid, qid) {
+		window.top.art.dialog({id:'zq', lock:false}).close();
+		window.top.art.dialog({title:'追问', lock:false, id:'zq', iframe:'{APP_PATH}index.php?m=zsask&a=addAnswer&aid='+ aid +'&qid='+ qid, width:'600', height:'150'}, 
+				function(){var d = window.top.art.dialog({id:'zq'}).data.iframe;
+				var form = d.document.getElementById('dosubmit');form.click();return false;}, 
+				function(){window.top.art.dialog({id:'zq', lock:false}).close()
+		});
+	}
+	
+	function commentAnswer(aid, qid, f, u) {
+		$('.cinfo_'+ aid).show('slow');
+		window.top.art.dialog({id:'zq', lock:false}).close();
+		if (u) {
+			$('#comment_'+ aid).val('回复 -> '+ $('#u_'+u).html() +'： ');
+		}
+		if (f =="1") {
+			var comment = $('#comment_'+ aid).val();
+			if (!comment) alert('请输入评语！');
+			$.post( '{APP_PATH}index.php?m=zsask&a=commentAnswer&aid='+ aid +'&qid='+ qid, {comment:comment, dosubmit:'1'},
+					
+				function (data) {
+					if (data.cid) {
+						var htmls = '<tr><td>'
+							+ '<a href="#" target="_blank" style="color:blue" id="u_'+data.cid+'">'
+							+ '{if $this->userid}{get_nickname($this->userid, "username")}{else}{ip()}{/if}</a> | '
+							+ data.time+'</td> '
+							+ '<td align="right">'
+						//	+ '<input type="button" name="btn3" value="回复" class="button" onclick="commentAnswer(\'{$a[aid]}\', \'{$info[qid]}\')">'
+							+ '<a href="javascript:;" onclick="commentAnswer(\''+ aid +'\', \''+ qid +'\', 0, \''+data.cid+'\')">回复</a>'
+							+ '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+							+ '</td></tr>'
+							+ '<tr><td colspan="2">'
+							+ '<div class="cm">'
+							+ comment
+							+ '</div>'
+							+ '</td></tr>';
+						$('#cmlist_'+ aid).prepend(htmls);
+						$('#comment_'+ aid).val('');
+					}
+				}, 'json'
+			);
+		}
+	}
+	
+	function editAnswer(aid, qid) {
+		window.top.art.dialog({id:'zq', lock:false}).close();
+		window.top.art.dialog({title:'完善答案', lock:false, id:'zq', iframe:'{APP_PATH}index.php?m=zsask&a=editAnswer&aid='+ aid +'&qid='+ qid, width:'600', height:'150'}, 
+				function(){var d = window.top.art.dialog({id:'zq'}).data.iframe;
+				var form = d.document.getElementById('dosubmit');form.click();return false;}, 
+				function(){window.top.art.dialog({id:'zq', lock:false}).close()
+		});
+	}
+
+{if param::get_cookie('admin_username')}
+
+	function delComment(aid, cid, obj) {
+		$.get('?m=zsask&c=zsask&a=delcomment&pc_hash={session_code("", "", 1)}&aid='+ aid +'&cid='+ cid, function(data) {
+			if (data =="1") {
+				$(obj).parent().parent().fadeOut('slow');
+				$('#comt_'+ cid).fadeOut('slow');
+			}
+		});
+	}
+	
+	function delAnswer(aid, qid, obj) {
+		$.get('?m=zsask&c=zsask&a=delanswer&pc_hash={session_code("", "", 1)}&aid='+ aid +'&qid='+ qid, function(data) {
+			if (data =="1") {
+				$(obj).parent().parent().fadeOut('slow');
+			}
+		});
+	}
+{/if}	
+</script>
+
+<script type="text/javascript" src="{APP_PATH}api.php?op=count&id={$info[qid]}&module=zsask"></script>
+{template "content", "footer"}

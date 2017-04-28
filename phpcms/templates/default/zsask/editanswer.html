@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<script type="text/javascript" src="{JS_PATH}jquery.min.js"></script>
+
+<link type="text/css" rel="stylesheet" href="{CSS_PATH}table_form.css">	
+<link type="text/css" rel="stylesheet" href="{CSS_PATH}zsask/zsask.css">
+
+<title>完善答案</title>
+</head>
+<body>
+
+<div class="type">
+
+<form name="cmform" id="cmform" action="" method="post">
+<table class="table_form" cellspacing="0">
+
+<tbody id="grade_2">
+
+<tr><td>
+<textarea name="answer" style="width:555px;height:100px">{$info[content]}</textarea>
+</td></tr>
+
+</tbody>
+</table>
+<input type="hidden" name="qid" value="{$qid}" />
+<input type="hidden" name="aid" value="{$aid}" />
+<input type="submit" name="dosubmit" id="dosubmit" value="提交" style="display:none"/>
+</form>
+
+</div>
+
+
+<script type="text/javascript">
+
+</script>
+
+</body>
+</html>

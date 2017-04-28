@@ -1,0 +1,61 @@
+〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓
+
+首先说明，本插件不是由我开发的，我没那能耐 。
+
+本模块是由“rokey2y” 开发制作，相关位置：http://bbs.phpcms.cn/thread-263933-1-1.html
+
+他出此模块的时候 没出UTF8版的，我找了好久也没找到。所以我就用他的GBK 版转了一下，分享给大家一起使用，
+
+如有需要的可放心下载，
+
+★★★★★★本人承接PC模版 DEDE模版仿制，如有需要可加QQ：190079616★★★★★★★
+
+随便AD一下我的淘宝店：http://charm5.taobao.com
+
+经营范围
+
+1、话费充值和软件
+2、虚拟主机提供
+3、企业网站制作
+4、CMS模版仿制
+
+欢迎大家光临本店
+
+〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓
+
+安装方法：
+
+
+'pc_version' => 'V9.0.7',	//phpcms 版本号
+'pc_release' => '20110413',	//phpcms 更新日期
+编码:gbk
+
+在此版本下完成，最新版本未测试，请谨慎安装
+由于官方内容模块 category.php栏目缓存过滤不严格，造成其它模块使用cateogry表的栏目在内容模块显示，所以需要再做点修改
+
+1.phpcms/module/admin/category.php
+
+341行:
+$categorys = $this->db->select('','catid,siteid',20000,'listorder ASC');
+修改为:
+$categorys = $this->db->select("module='content'",'catid,siteid',20000,'listorder ASC');
+
+347行:
+$this->categorys = $this->db->select(array('siteid'=>$this->siteid),'*',10000,'listorder ASC');
+修改为:
+$this->categorys = $this->db->select(array('siteid'=>$this->siteid,'module'=>'content'),'*',10000,'listorder ASC');
+
+2.phpcms/libs/classes/form.class.php
+
+173行:
+$file = 'category_content_'.$siteid;
+建议修改为:
+$file = $file ? $file : 'category_content_'.$siteid;
+
+
+
+压缩包文件直接上传覆盖，不影响其他文件。
+
+apache的伪静态规则请参考安装包中.htaccess文件
+模块-模块管理-问吧-模块配置-保存
+更新缓存

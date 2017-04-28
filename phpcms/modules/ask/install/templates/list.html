@@ -1,0 +1,108 @@
+{template "content","header"}
+<link href="{CSS_PATH}table_form.css" rel="stylesheet" type="text/css" />
+
+<!--main-->
+<div class="main">
+	<div class="col-left">
+    	<div class="crumbs"><a href="{siteurl($siteid)}">首页</a><span> > </span><a href="{siteurl($siteid)}/index.php?m=ask&c=index">问吧</a><span> > </span>{catpos_ask($catid)} 列表</div>
+
+<style>
+.list_tit{height:27px;line-height:28px;border-bottom-width:1px;border-bottom-style:solid;}
+.list_tit li{min-width:76px;_width:76px;height:26px;overflow:hidden;text-align:center;float:left;border-width:1px;border-style:solid;border-bottom:none;margin-right:4px;}
+.list_tit a,.list_tit strong{display:block;padding:0 15px;}
+.list_tit .current{position:relative;min-width:76px;_width:76px;height:27px;_margin-bottom:-1px;}
+.list_tit{border-bottom-color:#B2D0EA;}
+.list_tit li{border-color:#B2D0EA;background:url(http://cache.soso.com/wenwen/i/category_bg2.gif) repeat-x 0 -50px;}
+.list_tit a:link,.list_tit a:visited,.list_tit a:hover{color:#039;font-size:14px;font-weight:bold;text-decoration:none;}
+.list_tit .current{background:#fff;color:#039;font-size:14px;font-weight:bold;}
+
+.category_con,.baike{padding-left:9px;overflow:hidden;zoom:1;}
+.category_con h4{padding:7px 0 0 10px;}
+.category_con ul{overflow:hidden;zoom:1;margin-bottom:6px;}
+.category_con li{width:24%;float:left;padding:5px 0 5px 7px;line-height:1.231;height:20px;}
+.category_con span{margin-left:5px;}
+.category_con a:link,.category_con a:visited{padding:2px 1px 0 2px;*padding:2px 1px 0 2px;}
+.category_con strong{padding:2px 1px 0 2px;*padding:2px 1px 0 2px;}
+</style>
+{if $CATEGORYS[$catid][parentid]=='0'}
+{pc:ask action="category"  catid="$catid" num="20" order="catid DESC"}
+{else}
+{pc:ask action="category"  catid="$CATEGORYS[$catid][parentid]" num="20" order="catid DESC"}
+{/if}
+<div class="category_con">
+<h4>按类别查找：</h4>
+<ul>
+{loop $data $n $r}
+	<li><a href="{ask_cat_url($r[catid])}" {if $catid==$r[catid]} style="color:red"{/if}>{$r[catname]}</a><span>({$r[items]})</span></li>
+{/loop}
+</ul>
+</div>
+{/pc}
+		
+<ul class="list_tit">
+<li {if !$_GET['type'] || $_GET['type']=='all'} class="current"{/if}><a href="/index.php?m=ask&c=index&a=lists&catid={$catid}&type=all">全部问题</a></li>
+<li {if $_GET['type']=='solve'} class="current"{/if}><a href="/index.php?m=ask&c=index&a=lists&catid={$catid}&type=solve">已解决问题</a></li>
+<li {if $_GET['type']=='nosolve'} class="current"{/if}><a href="/index.php?m=ask&c=index&a=lists&catid={$catid}&type=nosolve">待解决问题</a></li>
+<li {if $_GET['type']=='vote'} class="current"{/if}><a href="/index.php?m=ask&c=index&a=lists&catid={$catid}&type=vote">投票中问题</a></li>
+<li {if $_GET['type']=='high'} class="current"{/if}><a href="/index.php?m=ask&c=index&a=lists&catid={$catid}&type=high">高分问题</a></li>
+<li><a href="/index.php?m=ask&c=index&a=question&catid={$catid}" target="_blank">我要提问</a></li>
+</ul>
+
+	{if $_GET['type']=='solve'}
+		{pc:ask action="lists" status="5" catid="$catid" num="20" order="askid DESC" page="$page"}
+	{elseif $_GET['type']=='nosolve'}
+		{pc:ask action="lists" status="3" catid="$catid" num="20" order="askid DESC" page="$page"}
+	{elseif $_GET['type']=='vote'}
+		{pc:ask action="lists" flag="1" status="3" catid="$catid" num="20" order="askid DESC" page="$page"}
+	{elseif $_GET['type']=='high'}
+		{pc:ask action="lists" flag="2" status="3" catid="$catid" num="20" order="askid DESC" page="$page"}
+	{else}
+		{pc:ask action="lists" catid="$catid" num="20" order="askid DESC" page="$page"}
+	{/if}
+
+		
+<table cellpadding="0" cellspacing="0" width="100%;" class="table_form">
+  <tr>
+    <th align="left">标题</th>
+    <th width="80" align="center">状态</th>
+    <th width="50" align="center">回答数</th>
+    <th width="120" align="center">提问时间</th>
+  </tr>
+  {loop $data $n $r}
+  <tr>
+    <td align="left" style="padding-left:5px">{if $r['reward']}<span style="color:orange;"><img src="{IMG_PATH}icon/m_4.png" width="12" height="11">{$r[reward]} </span>{/if}
+	·<a href="{ask_url($r[catid],$r[askid])}" target="{$target}">{str_cut($r[title],40,'..')}</a> <a href="{$CATEGORYS[$r[catid]][url]}" style="color:gray">[{$CATEGORYS[$r[catid]][catname]}]</a></td>
+    <td align="center">{if $r[status]==3}解决中{elseif $r[status]==6}已关闭{else}已解决{/if}</td>
+    <td align="center">{$r[answercount]}</td>
+    <td align="center">{date('Y-m-d H:i', $r[addtime])}</td>
+  </tr>
+  {/loop}
+</table>
+        <div id="pages" class="text-c">{$pages}</div>
+{/pc}
+  </div>
+    <div class="col-auto">
+        <div class="box">
+            <h5 class="title-2">积分月排行</h5>
+             {pc:ask action="hits" catid="$catid" num="10" order="month DESC" cache="3600"}
+            <ul class="content digg">
+				{loop $data $r}
+					<li><a href="{$r[url]}" target="_blank">{$r[username]}</a></li>
+				{/loop}
+            </ul>
+            {/pc}
+        </div>
+        <div class="bk10"></div>
+        <div class="box">
+            <h5 class="title-2">积分周排行</h5>
+             {pc:ask action="hits" catid="$catid" num="10" order="week DESC" cache="3600"}
+            <ul class="content digg">
+				{loop $data $r}
+					<li><a href="{$r[url]}" target="_blank">{$r[username]}</a></li>
+				{/loop}
+            </ul>
+            {/pc}
+        </div>
+    </div>
+</div>
+{template "content","footer"}

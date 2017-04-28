@@ -1,0 +1,99 @@
+{template "content","header"}
+<link href="{CSS_PATH}table_form.css" rel="stylesheet" type="text/css" />
+<!--main-->
+<div class="main">
+	<div class="col-left">
+    	<div class="crumbs"><a href="{siteurl($siteid)}">首页</a><span> > </span>问吧</div>
+		
+		      <!--begin 发布问题-->
+			  <table cellpadding="0" cellspacing="0" width="100%" class="table_form">
+
+	<form name="myform" method="post" action="{APP_PATH}index.php?m=ask&c=index&a=question">
+      <tr>
+        <td><input type="text" style="width:600px; height:24px; font-size:15px; color:#666666" name="title" id="title" value="{$title}" class="input-text" /></td>
+		<td width="70">
+		<input type="submit" value="我要提问" style="width:60px;" /> 
+		</td>
+      </tr>
+	  </form>
+	  </table>
+      <!--end 发布问题-->
+
+		
+		<div class="box boxsbg cboxs">
+		 <h5>待解决问题 <a href="{APP_PATH}index.php?m=ask&c=index&a=browse&type=nosolve" class="more">更多>></a></h5>
+    	{pc:ask action="lists" status="3" num="10" order="askid DESC" page="$page"}
+        <ul class="list lh24 f14">
+{loop $data $r}
+	<li><span class="rt">{date('Y-m-d H:i:s',$r[addtime])}</span>·<a href="{ask_url($r[catid],$r[askid])}" target="_blank"{title_style($r[style])}>{$r[title]}</a></li>
+	{if $n%5==0}<li class="bk20 hr"></li>{/if}
+{/loop}
+        </ul>
+		{/pc}
+        </div>
+		<div class="bk10"></div>
+		<div class="box boxsbg cboxs">
+		 <h5>已解决问题 <a href="{APP_PATH}index.php?m=ask&c=index&a=browse&type=solve" class="more">更多>></a></h5>
+    	{pc:ask action="lists" status="5" num="10" order="askid DESC" page="$page"}
+        <ul class="list lh24 f14">
+{loop $data $r}
+	<li><span class="rt">{date('Y-m-d H:i:s',$r[inputtime])}</span>·<a href="{ask_url($r[catid],$r[askid])}" target="_blank"{title_style($r[style])}>{$r[title]}</a></li>
+	{if $n%5==0}<li class="bk20 hr"></li>{/if}
+{/loop}
+        </ul>
+		{/pc}
+        </div>
+
+  </div>
+    <div class="col-auto">
+<style>
+#ask_nav{margin-top:-5px;}
+#ask_nav dl{ margin:5px 5px 0;border-bottom:1px dashed #dcdcdc;}
+#ask_nav dt{ font-size:14px; font-weight:bold; color:#06c;}
+#ask_nav dd a{ margin-right:6px; height:28px; line-height:28px; color:#06c;}
+</style>
+	 <div class="box">
+            <h5 class="title-2">问吧导航</h5>
+             <div id="ask_nav">
+{pc:ask action="category"  catid="0" num="20" order="catid DESC"}
+{loop $data $n $cat}
+<dl>
+<dt><a href="{$cat[url]}" >{$cat[catname]}</a></dt>
+<dd>
+{pc:ask action="category"  catid="$cat[catid]" num="10" order="catid DESC"}
+{if $data}
+{loop $data $k $childcat}
+<a href="{$childcat[url]}" >{$childcat[catname]}</a>
+{/loop}
+<a href="{$cat[url]}" >>></a>
+{/if}
+</dd></dl>
+{/loop}
+{/pc}
+      </div>
+        </div>
+        <div class="bk10"></div>
+        <div class="box">
+            <h5 class="title-2">积分月排行</h5>
+             {pc:ask action="hits" catid="$catid" num="10" order="month DESC" cache="3600"}
+            <ul class="content digg">
+				{loop $data $r}
+					<li><a href="{$r[url]}" target="_blank">{$r[username]}</a></li>
+				{/loop}
+            </ul>
+            {/pc}
+        </div>
+        <div class="bk10"></div>
+        <div class="box">
+            <h5 class="title-2">积分周排行</h5>
+             {pc:ask action="hits" catid="$catid" num="10" order="week DESC" cache="3600"}
+            <ul class="content digg">
+				{loop $data $r}
+					<li><a href="{$r[url]}" target="_blank">{$r[username]}</a></li>
+				{/loop}
+            </ul>
+            {/pc}
+        </div>
+    </div>
+</div>
+{template "content","footer"}

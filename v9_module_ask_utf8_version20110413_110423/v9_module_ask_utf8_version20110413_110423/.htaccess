@@ -1,0 +1,12 @@
+# 将 RewriteEngine 模式打开
+RewriteEngine On   
+
+RewriteBase /    
+# ask Rewrite Rules Start
+
+RewriteRule ^(.*)ask/show-([0-9]+)-([0-9]+).html $1/index.php?m=ask&c=index&a=show&catid=$2&id=$3
+RewriteRule ^(.*)ask/list-([0-9]+)-([0-9]+).html $1/index.php?m=ask&c=index&a=lists&catid=$2&page=$3
+
+# ask Rewrite Rules End
+
+
